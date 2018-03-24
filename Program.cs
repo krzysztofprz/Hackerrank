@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -8,37 +8,34 @@ namespace ConsoleApp9
 {
     class Program
     {
-        public static int MAX = 100000;
+        public static long MAX = 100000;
 
         static void Main(string[] args)
         {
-            List<int> primes = getDoubledPrimes(MAX);
-            List<int> palindromesList = new List<int>();
-            foreach (int i in primes)
+            List<long> primes = getDoubledPrimes(MAX);
+            List<long> palindromesList = new List<long>();
+            foreach (long i in primes)
             {
                 bool palindrome = IsPalindrome(i);
                 if (palindrome)
                 {
                     palindromesList.Add(i);
+                    Console.WriteLine(i);
                 }
             }
-
-            foreach(int p in palindromesList)
-            {
-                int maxValue = palindromesList.Max();
+                long maxValue = palindromesList.Max();
                 Console.WriteLine("This is the biggest palindrome: " + maxValue);
-                break;
-            }
+
             Console.ReadKey();
         }
 
-        static List<int> getDoubledPrimes(int max)
+        static List<long> getDoubledPrimes(long max)
         {
-            List<int> primesList = new List<int>();
+            List<long> primesList = new List<long>();
             bool isPrime = true;
-            for (int i = 2; i < max; i++)
+            for (long i = 2; i < max; i++)
             {
-                for (int j = 2; j < i / 2; j++)
+                for (long j = 2; j < i / 2; j++)
                 {
 
                     if (i % j == 0)
@@ -50,7 +47,8 @@ namespace ConsoleApp9
                 }
                 if (isPrime)
                 {
-                    primesList.Add(i * i);
+                    primesList.Add(i*i);
+                   // Console.WriteLine(i*i);
                 }
                 isPrime = true;
             }
@@ -58,19 +56,17 @@ namespace ConsoleApp9
 
         }
 
-        public static bool IsPalindrome(int num)
+        public static bool IsPalindrome(long num)
         {
-            int n = num;
-            int rev = 0;
+            long n = num;
+            long rev = 0;
             while (n > 0)
             {
-                int dig = n % 10;
+                long dig = n % 10;
                 rev = rev * 10 + dig;
                 n = n / 10;
             }
             return num == rev;
-        }        
+        }
     }
 }
-
-
