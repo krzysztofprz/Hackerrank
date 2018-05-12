@@ -1,0 +1,46 @@
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace test
+{
+    class Program
+    {
+        static void Main(string[] args)
+        {
+            int n = Convert.ToInt32(Console.ReadLine());
+
+            string[] unsorted = new string[n];
+
+            for (int i = 0; i < n; i++)
+            {
+                string unsortedItem = Console.ReadLine();
+                unsorted[i] = unsortedItem;
+            }
+
+            string[] result = bigSorting(unsorted);
+            foreach(string item in result)
+            {
+                Console.WriteLine(item);
+            }
+            Console.ReadKey();
+        }
+
+        static string[] bigSorting(string[] unsorted)
+        {
+            string[] arr = unsorted;
+            Array.Sort(arr, (left, right) =>
+            {
+
+                if (left.Length != right.Length)
+                    return left.Length - right.Length;
+                return left.CompareTo(right);
+            });
+
+            return arr;
+        }
+
+    }
+}
