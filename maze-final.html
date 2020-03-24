@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset='utf-8'>
+    <meta http-equiv='X-UA-Compatible' content='IE=edge'>
+    <title>Page Title</title>
+    <meta name='viewport' content='width=device-width, initial-scale=1'>
+    <!-- <link rel='stylesheet' type='text/css' media='screen' href='main.css'>
+    <script src='main.js'></script> -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
+        integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"
+        integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo"
+        crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"
+        integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1"
+        crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"
+        integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM"
+        crossorigin="anonymous"></script>
+</head>
+
+
+<body>
+    <div>
+        <button type="button" onclick="generate()">Generate</button>
+        <button type="button" onclick="findPath()">Find path</button>
+        <button type="button" onclick="showPath()">Show path</button>
+        <button type="button" onclick="run()">Run Forrest!</button>
+    </div>
+
+    <script>
+
+        let way = [];
+        let visited = [];
+        let correctPath = [];
+        let directions = [];
+
+        let mazeWidth;
+        let mazeHeight;
+
+        let playerPosition;
+        let endPosition;
+        let domokunPosition;
+
+        const mazeId = 'df051d99-e625-4f9e-9c9c-6bd26b3f75eb';
+
+        let result;
+        let data;
+
+        let first = false;
+
+        async function generate() {
+            const url = `https://ponychallenge.trustpilot.com/pony-challenge/maze/${mazeId}`;
+
+            await fetch(url)
+                .then((response) => {
+                    return response.json();
+                })
+                .then((data) => {
+                    result = data;
+                });
+
+            console.log(result);
+
+            data = result.data;
+
+            playerPosition = result.pony[0];
+            endPosition = result['end-point'][0];
+            domokunPosition = result.domokun[0];
+            mazeWidth = result.size[0];
+            mazeHeight = result.size[1];
+
+            console.log(playerPosition);
+
+            const printUrl = `https://ponychallenge.trustpilot.com/pony-challenge/maze/${mazeId}/print`;
+
+            await fetch(printUrl)
+                .then((response) => {
+                    response.text().then((text) => {
+                        console.log(text);
+                    });
+                });
+        }
+
+        // returns all possible ways for a player
+        function getPossibleWays(playerPosition) {
+            let possibleWays = [];
+
+            if (playerPosition + 1 >= mazeWidth * mazeHeight - 1) {
+                playerPositionPlusOne = mazeWidth * mazeHeight - 1;
+            } else {
+                playerPositionPlusOne = playerPosition + 1;
+            }
+
+            if (playerPosition + mazeWidth >= mazeWidth * mazeHeight - 1) {
+                playerPositionPlusMazeWidth = mazeWidth * mazeHeight - 1;
+            } else {
+                playerPositionPlusMazeWidth = playerPosition + mazeWidth;
+            }
+
+            if (!data[playerPosition].includes('west')) {
+                let moveDirection = { direction: 'west', field: playerPosition - 1 };
+                possibleWays.push(moveDirection);
+            }
+
+            if (!data[playerPosition].includes('north')) {
+                let moveDirection = { direction: 'north', field: playerPosition - mazeWidth };
+                possibleWays.push(moveDirection);
+            }
+
+            if (!data[playerPositionPlusOne].includes('west')) {
+                let moveDirection = { direction: 'east', field: playerPosition + 1 };
+                possibleWays.push(moveDirection);
+            }
+
+            if (!data[playerPositionPlusMazeWidth].includes('north')) {
+                let moveDirection = { direction: 'south', field: playerPosition + mazeWidth };
+                possibleWays.push(moveDirection);
+            }
+
+            return possibleWays;
+        };
+
+        function findPath(currentPosition = -1) {
+            if (!first) {
+                currentPosition = playerPosition;
+                first = true;
+            }
+
+            if (currentPosition === endPosition) {
+                console.log('path found');
+                return true;
+            }
+
+            let possibleWays = getPossibleWays(currentPosition);
+
+            if (possibleWays[0] !== undefined) {
+
+                if (possibleWays[0].field > mazeHeight * mazeWidth - 1) {
+                    return false;
+                }
+
+                if (!visited.includes(possibleWays[0].field)) {
+                    visited.push(possibleWays[0].field);
+                    if (findPath(possibleWays[0].field)) {
+                        correctPath.push(possibleWays[0]);
+                        return true;
+                    }
+                }
+            }
+
+            if (possibleWays[1] !== undefined) {
+
+                if (possibleWays[1].field > mazeHeight * mazeWidth - 1) {
+                    return false;
+                }
+
+                if (!visited.includes(possibleWays[1].field)) {
+                    visited.push(possibleWays[1].field);
+                    if (findPath(possibleWays[1].field)) {
+                        correctPath.push(possibleWays[1]);
+                        return true;
+                    }
+                }
+            }
+
+            if (possibleWays[2] !== undefined) {
+
+                if (possibleWays[2].field > mazeHeight * mazeWidth - 1) {
+                    return false;
+                }
+
+                if (!visited.includes(possibleWays[2].field)) {
+                    visited.push(possibleWays[2].field);
+                    if (findPath(possibleWays[2].field)) {
+                        correctPath.push(possibleWays[2]);
+                        return true;
+                    }
+                }
+            }
+
+            if (possibleWays[3] !== undefined) {
+
+                if (possibleWays[3].field > mazeHeight * mazeWidth - 1) {
+                    return false;
+                }
+
+                if (!visited.includes(possibleWays[3].field)) {
+                    visited.push(possibleWays[3].field);
+                    if (findPath(possibleWays[3].field)) {
+                        correctPath.push(possibleWays[3]);
+                        return true;
+                    }
+                }
+            }
+
+            return false;
+        }
+
+        function showPath() {
+            //let index = correctPath.map(e => e.field).indexOf(playerPosition);
+            //correctPath.splice(index, correctPath.length - index);
+            console.log(correctPath.reverse());
+        }
+
+        async function run() {
+            const url = `https://ponychallenge.trustpilot.com/pony-challenge/maze/${mazeId}`;
+            const printUrl = `https://ponychallenge.trustpilot.com/pony-challenge/maze/${mazeId}/print`;
+
+            let direction = { 'direction': correctPath[0].direction };
+
+            await fetch(url, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Accept': 'application/json'
+                },
+                body: JSON.stringify(direction)
+            }).then((response) => {
+                correctPath.shift();
+                return response.json();
+            }).then((data) => {
+                if (data.state !== 'active') {
+                    console.log('game over');
+                }
+            });
+
+            await fetch(printUrl)
+                .then((response) => {
+                    response.text().then((text) => {
+                        console.log(text);
+                    });
+                })
+                .catch((error) => {
+                    console.log('Oops! Something went wrong :(');
+                })
+        }
+
+    </script>
+</body>
