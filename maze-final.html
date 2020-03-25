@@ -29,6 +29,9 @@
         <button type="button" onclick="showPath()">Show path</button>
         <button type="button" onclick="run()">Run Forrest!</button>
     </div>
+    <div>
+        <p>Open a console to see magic :)</p>
+    </div>
 
     <script>
 
@@ -44,13 +47,17 @@
         let endPosition;
         let domokunPosition;
 
-        const mazeId = 'df051d99-e625-4f9e-9c9c-6bd26b3f75eb';
+        // generated maze id which will be used in algorithm
+        // create your own id and paste here
+        const mazeId = 'ddbae514-7d1c-4e7c-b560-e91fff21412c';
 
         let result;
         let data;
 
-        let first = false;
+        // flag determing first iteration of algorithm
+        let isFirst = false;
 
+        // calls for all information about maze
         async function generate() {
             const url = `https://ponychallenge.trustpilot.com/pony-challenge/maze/${mazeId}`;
 
@@ -60,6 +67,9 @@
                 })
                 .then((data) => {
                     result = data;
+                }).catch((error) => {
+                    console.log('Oops! Something went wrong :(');
+                    console.log("Couldn't get maze data.");
                 });
 
             console.log(result);
@@ -72,8 +82,6 @@
             mazeWidth = result.size[0];
             mazeHeight = result.size[1];
 
-            console.log(playerPosition);
-
             const printUrl = `https://ponychallenge.trustpilot.com/pony-challenge/maze/${mazeId}/print`;
 
             await fetch(printUrl)
@@ -81,7 +89,10 @@
                     response.text().then((text) => {
                         console.log(text);
                     });
-                });
+                }).catch((error) => {
+                    console.log('Oops! Something went wrong :(');
+                    console.log("Maze couldn't be printed.");
+                })
         }
 
         // returns all possible ways for a player
@@ -123,10 +134,11 @@
             return possibleWays;
         };
 
+        // recursive algorithm finding a way out
         function findPath(currentPosition = -1) {
-            if (!first) {
+            if (!isFirst) {
                 currentPosition = playerPosition;
-                first = true;
+                isFirst = true;
             }
 
             if (currentPosition === endPosition) {
@@ -199,12 +211,12 @@
             return false;
         }
 
+        // shows a way out in an array form
         function showPath() {
-            //let index = correctPath.map(e => e.field).indexOf(playerPosition);
-            //correctPath.splice(index, correctPath.length - index);
             console.log(correctPath.reverse());
         }
 
+        // moves player towards exit step by step
         async function run() {
             const url = `https://ponychallenge.trustpilot.com/pony-challenge/maze/${mazeId}`;
             const printUrl = `https://ponychallenge.trustpilot.com/pony-challenge/maze/${mazeId}/print`;
@@ -225,7 +237,10 @@
                 if (data.state !== 'active') {
                     console.log('game over');
                 }
-            });
+            }).catch((error) => {
+                console.log('Oops! Something went wrong :(');
+                console.log("Pony couldn't move.");
+            })
 
             await fetch(printUrl)
                 .then((response) => {
@@ -235,6 +250,7 @@
                 })
                 .catch((error) => {
                     console.log('Oops! Something went wrong :(');
+                    console.log("Maze couldn't be printed.");
                 })
         }
 
