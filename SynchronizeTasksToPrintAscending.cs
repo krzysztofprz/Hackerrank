@@ -33,3 +33,44 @@ var even = Task.Factory.StartNew(PrintEven);
 
 odd.Wait();
 even.Wait();
+
+// Multiple tasks
+//var first = new int[] { 1, 5, 9 };
+//var second = new int[] { 2, 6, 10 };
+//var third = new int[] { 3, 7, 11 };
+//var fourth = new int[] { 4, 8, 12 };
+
+//object _lock = new();
+//var current = 1;
+
+//var max = 4;
+
+//var t1 = Task.Factory.StartNew(() => Print(first, 1));
+//var t2 = Task.Factory.StartNew(() => Print(second, 2));
+//var t3 = Task.Factory.StartNew(() => Print(third, 3));
+//var t4 = Task.Factory.StartNew(() => Print(fourth, 4));
+
+//t1.Wait();
+//t2.Wait();
+//t3.Wait();
+//t4.Wait();
+
+//void Print(int[] arr, int order)
+//{
+//    foreach (var item in arr)
+//    {
+//        lock (_lock)
+//        {
+//            while (current != order)
+//            {
+//                Monitor.Wait(_lock);
+//            }
+            
+//            current = current == max ? 1 : ++current;
+
+//            Console.WriteLine(item);
+
+//            Monitor.PulseAll(_lock);
+//        }
+//    }
+//}
