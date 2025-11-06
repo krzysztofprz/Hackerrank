@@ -3,7 +3,7 @@
 // Use appropriate synchronization mechanisms
 
 int[] _odd = [1, 3, 5, 7, 9];
-int[] _even = [2, 4, 6, 8,];
+int[] _even = [2, 4, 6, 8];
 
 var semaphoreOdd = new SemaphoreSlim(1, 1);
 var semaphoreEven = new SemaphoreSlim(0, 1);
@@ -74,3 +74,73 @@ even.Wait();
 //        }
 //    }
 //}
+
+//AutoResetEvent oddTurn = new AutoResetEvent(true);
+//AutoResetEvent evenTurn = new AutoResetEvent(false);
+
+//int[] _odd = [1, 3, 5, 7, 9];
+//int[] _even = [2, 4, 6, 8];
+
+//void PrintOdd()
+//{
+//    foreach (var item in _odd)
+//    {
+//        oddTurn.WaitOne();
+//        Console.WriteLine(item);
+//        evenTurn.Set();
+//    }
+//}
+
+//void PrintEven()
+//{
+//    foreach (var item in _even)
+//    {
+//        evenTurn.WaitOne();
+//        Console.WriteLine(item);
+//        oddTurn.Set();
+//    }
+//}
+
+//var odd = Task.Run(PrintOdd);
+//var even = Task.Run(PrintEven);
+
+//odd.Wait();
+//even.Wait();
+
+//// Constructor for ManualResetEvent: Initializes a ManualResetEvent instance, allowing the initial state to be specified.
+//var oddTurn = new ManualResetEventSlim(true);
+//var evenTurn = new ManualResetEventSlim(false);
+
+//int[] _odd = [1, 3, 5, 7, 9];
+//int[] _even = [2, 4, 6, 8];
+
+//void PrintOdd()
+//{
+//    foreach (var item in _odd)
+//    {
+//        // Wait() method: Blocks the current thread until a signal is received.
+//        oddTurn.Wait();
+//        Console.WriteLine(item);
+//        // Reset() method: Sets the ManualResetEvent to a non-signaled state, blocking the waiting threads from continuing execution.
+//        oddTurn.Reset();
+//        // Set() method: Set the ManualResetEvent to the signaled state, allowing waiting threads to continue execution.
+//        evenTurn.Set();
+//    }
+//}
+
+//void PrintEven()
+//{
+//    foreach (var item in _even)
+//    {
+//        evenTurn.Wait();
+//        Console.WriteLine(item);
+//        evenTurn.Reset();
+//        oddTurn.Set();
+//    }
+//}
+
+//var odd = Task.Run(PrintOdd);
+//var even = Task.Run(PrintEven);
+
+//odd.Wait();
+//even.Wait();
