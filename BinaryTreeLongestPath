@@ -1,0 +1,182 @@
+var node = new Node(
+        Id: 1,
+        Left: new Node(
+            Id: 2,
+            Left: new Node(
+        Id: 3,
+        Left: new Node(
+            Id: 4,
+            Left: new Node(
+                Id: 5,
+                Left: null,
+                Right: new Node(
+                    Id: 6,
+                    Left: new Node(
+                        Id: 7,
+                        Left: new Node(
+                            Id: 8,
+                            Left: null,
+                            Right: null),
+                        Right: new Node(
+                            Id: 9,
+                            Left: null,
+                            Right: null)),
+                    Right: null)),
+            Right: new Node(
+                Id: 10,
+                Left: null,
+                Right: new Node(
+                    Id: 11,
+                    Left: new Node(
+                        Id: 12,
+                        Left: null,
+                        Right: new Node(
+                            Id: 13,
+                            Left: new Node(
+                                Id: 14,
+                                Left: null,
+                                Right: new Node(
+                                    Id: 15,
+                                    Left: null,
+                                    Right: new Node(
+                                        Id: 16,
+                                        Left: new Node(
+                                            Id: 17,
+                                            Left: null,
+                                            Right: new Node(
+                                                Id: 18,
+                                                Left: null,
+                                                Right: null)),
+                                        Right: null))),
+                            Right: null)),
+                    Right: null))),
+        Right: new Node(
+            Id: 19,
+            Left: new Node(
+                Id: 20,
+                Left: new Node(
+                    Id: 21,
+                    Left: null,
+                    Right: new Node(
+                        Id: 22,
+                        Left: new Node(
+                            Id: 23,
+                            Left: null,
+                            Right: null),
+                        Right: new Node(
+                            Id: 24,
+                            Left: null,
+                            Right: new Node(
+                                Id: 25,
+                                Left: new Node(
+                                    Id: 26,
+                                    Left: new Node(
+                                        Id: 27,
+                                        Left: new Node(
+                                            Id: 28,
+                                            Left: null,
+                                            Right: new Node(
+                                                Id: 29,
+                                                Left: null,
+                                                Right: new Node(
+                                                    Id: 30,
+                                                    Left: null,
+                                                    Right: null))),
+                                        Right: new Node(
+                                            Id: 31,
+                                            Left: null,
+                                            Right: null)),
+                                    Right: null),
+                                Right: null)))),
+                Right: null),
+            Right: new Node(
+                Id: 32,
+                Left: null,
+                Right: null))),
+    Right: new Node(
+        Id: 33,
+        Left: null,
+        Right: null)),
+Right: new Node(
+    Id: 34,
+    Left: null,
+    Right: new Node(
+        Id: 35,
+        Left: new Node(
+            Id: 36,
+            Left: null,
+            Right: null),
+        Right: null)));
+
+List<int> GetLongestPath(Node? root)
+{
+    if (root is null)
+    {
+        return [];
+    }
+
+    var left = GetLongestPath(root.Left);
+    var right = GetLongestPath(root.Right);
+
+    var longer = left.Count > right.Count ? left : right;
+
+    var result = new List<int> { root.Id };
+    result.AddRange(longer);
+
+    return result;
+}
+
+List<int> GetLongestPathStack(Node root)
+{
+    var stack = new Stack<(Node node, int depth)>();
+    var parent = new Dictionary<Node, Node?>();
+
+    stack.Push((root, 1));
+    parent[root] = null;
+
+    Node? deepest = null;
+    int maxDepth = 0;
+
+    while (stack.Count > 0)
+    {
+        var (node, depth) = stack.Pop();
+
+        if (node.Left is null && node.Right is null && depth > maxDepth)
+        {
+            maxDepth = depth;
+            deepest = node;
+        }
+
+        if (node.Left is not null)
+        {
+            parent[node.Left] = node;
+            stack.Push((node.Left, depth + 1));
+        }
+
+        if (node.Right is not null)
+        {
+            parent[node.Right] = node;
+            stack.Push((node.Right, depth + 1));
+        }
+    }
+
+    var path = new List<int>();
+    var current = deepest;
+
+    while (current != null)
+    {
+        path.Add(current.Id);
+        current = parent[current];
+    }
+
+    path.Reverse();
+    return path;
+}
+
+var longestPath = GetLongestPath(node);
+Console.WriteLine($"{nameof(GetLongestPath)} length: {longestPath.Count} and path: {string.Join("->", longestPath)}");
+
+var longestPathStack = GetLongestPathStack(node);
+Console.WriteLine($"{nameof(GetLongestPathStack)} length: {longestPath.Count} and path: {string.Join("->", longestPathStack)}");
+
+public record Node(int Id, Node? Left, Node? Right);
