@@ -1,0 +1,71 @@
+// https://www.hackerrank.com/challenges/torque-and-development/problem?isFullScreen=false
+
+public class RoadsAndLibraries
+{
+    public static int CalculateCost(int cities, int libraryCost, int roadCost, int[][] connections)
+    {
+        if (roadCost > libraryCost)
+        {
+            return cities * libraryCost;
+        }
+
+        var adj = new Dictionary<int, List<int>>();
+
+        for (int i = 1; i <= cities; i++)
+        {
+            adj.Add(i, new List<int>());
+        }
+
+        for (int i = 0; i < connections.Length; i++)
+        {
+            var a = connections[i][0];
+            var b = connections[i][1];
+
+            adj[a].Add(b);
+            adj[b].Add(a);
+        }
+
+        var visited = new HashSet<int>();
+        int cost = 0;
+
+        foreach (var city in adj.Keys)
+        {
+            if (visited.Contains(city))
+            {
+                continue;
+            }
+
+            int size = DFS(city, adj, visited);
+            cost += libraryCost + (size - 1) * roadCost;
+        }
+
+        return cost;
+    }
+
+    static int DFS(int start, Dictionary<int, List<int>> adj, HashSet<int> visited)
+    {
+        var stack = new Stack<int>();
+        stack.Push(start);
+
+        visited.Add(start);
+
+        int size = 0;
+
+        while (stack.Count > 0)
+        {
+            var node = stack.Pop();
+            size++;
+
+            foreach (var next in adj[node])
+            {
+                if (!visited.Contains(next))
+                {
+                    visited.Add(next);
+                    stack.Push(next);
+                }
+            }
+        }
+
+        return size;
+    }
+}
