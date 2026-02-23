@@ -1,0 +1,91 @@
+//https://www.hackerrank.com/challenges/journey-to-the-moon/problem?isFullScreen=true
+
+//var n = 4; // [0, 1, 2, 3]
+//List<List<int>> astronauts = new List<List<int>>
+//{
+//    new List<int> { 1, 2 },
+//    new List<int> { 2, 3 },
+//};
+// Expected output: 3
+
+var n = 100000;
+List<List<int>> astronauts = new List<List<int>>
+{
+    new List<int> { 1, 2 },
+    new List<int> { 3, 4 },
+};
+// Expected output: 4999949998
+
+var pairs = JourneyToMoon(n, astronauts);
+Console.WriteLine($"Unique pairs: {pairs}");
+
+static long JourneyToMoon(int n, List<List<int>> astronauts)
+{
+    var ids = Enumerable.Range(0, n).ToList();
+
+    var adj = new Dictionary<int, List<int>>();
+
+    foreach (var id in ids)
+    {
+        adj[id] = new List<int>();
+    }
+
+    for (var i = 0; i < astronauts.Count; i++)
+    {
+        var a = astronauts[i][0];
+        var b = astronauts[i][1];
+
+        adj[a].Add(b);
+        adj[b].Add(a);
+    }
+
+    var groups = new List<List<int>>();
+    var countryAstronauts = new HashSet<int>();
+
+    foreach (var id in ids)
+    {
+        if (countryAstronauts.Contains(id))
+        {
+            continue;
+        }
+
+        groups.Add(GroupAstronauts(id, adj, countryAstronauts));
+    }
+
+    long all = 0;
+    long count = 0;
+
+    foreach (var group in groups)
+    {
+        all += group.Count * count;
+        count += group.Count;
+    }
+
+    return all;
+}
+
+static List<int> GroupAstronauts(int astronaut, Dictionary<int, List<int>> adj, HashSet<int> countryAstronauts)
+{
+    var group = new List<int>();
+    var stack = new Stack<int>();
+
+    stack.Push(astronaut);
+    countryAstronauts.Add(astronaut);
+
+    while (stack.Count > 0)
+    {
+        var a = stack.Pop();
+        group.Add(a);
+
+        foreach (var id in adj[a])
+        {
+            if (!countryAstronauts.Contains(id))
+            {
+                countryAstronauts.Add(id);
+                stack.Push(id);
+            }
+        }
+    }
+
+    return group;
+}
