@@ -1,0 +1,61 @@
+//https://www.hackerrank.com/challenges/jeanies-route/problem?isFullScreen=true
+
+int[][] roads = [
+    // cities to visit:
+    [1, 3, 4],
+    // roads:
+    [1, 2, 1],
+    [2, 3, 2],
+    [2, 4, 2],
+    [3, 5, 3]];
+
+var result = JeanisRoute(3, roads);
+
+Console.WriteLine($"Result: {result}");
+
+static int JeanisRoute(int k, int[][] roads)
+{
+    var adj = new Dictionary<int, List<(int next, int cost)>>();
+
+    for (var i = 1; i < roads.Length; i++)
+    {
+        int u = roads[i][0];
+        int v = roads[i][1];
+        int w = roads[i][2];
+
+        if (!adj.ContainsKey(u)) adj[u] = new();
+        if (!adj.ContainsKey(v)) adj[v] = new();
+
+        adj[u].Add((v, w));
+        adj[v].Add((u, w));
+    }
+
+    var letters = new HashSet<int>(roads[0]);
+
+    var cost = 0;
+
+    bool DepthFirstSearch(int node, int parent)
+    {
+        bool contains = letters.Contains(node);
+
+        foreach (var (next, weight) in adj[node])
+        {
+            if (next == parent)
+            {
+                continue;
+            }
+
+            if (DepthFirstSearch(next, node))
+            {
+                cost += weight;
+                contains = true;
+            }
+        }
+
+        return contains;
+    }
+
+    DepthFirstSearch(roads[0][0], -1);
+
+    return cost + roads[1][2];
+}
