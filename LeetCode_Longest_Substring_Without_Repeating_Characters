@@ -1,0 +1,60 @@
+function lengthOfLongestSubstring(s: string): number {
+  if (s.length === 1) {
+    return 1;
+  }
+
+  let longest = "";
+  let current = "";
+
+  for (let i = 0; i < s.length; i++) {
+    if (current.length > longest.length) {
+      longest = current;
+    }
+
+    let c = s[i];
+
+    if (current.includes(c)) {
+      if (current.indexOf(c) === 0) {
+        current = current.substring(1) + c;
+        continue;
+      } else {
+        current = current.substring(current.lastIndexOf(c) + 1) + c;
+      }
+
+      continue;
+    }
+
+    current += c;
+  }
+
+  return current.length > longest.length ? current.length : longest.length;
+}
+
+function lengthOfLongestSubstring(s: string): number {
+  if (s.length === 1) {
+    return 1;
+  }
+
+  let set = new Set<string>();
+  let left = 0;
+  let length = 0;
+
+  for (let right = 0; right < s.length; right++) {
+    while (set.has(s[right])) {
+      set.delete(s[left]);
+      left++;
+    }
+
+    set.add(s[right]);
+    length = Math.max(length, right - left + 1);
+  }
+
+  return length;
+}
+
+//console.log("result: ", lengthOfLongestSubstring("abcabcbb"));
+//console.log("result: ", lengthOfLongestSubstring("pwwkew"));
+//console.log("result: ", lengthOfLongestSubstring("aabaab!bb"));
+//console.log("result: ", lengthOfLongestSubstring("au"));
+//console.log("result: ", lengthOfLongestSubstring("ohvhjdml"));
+//console.log("result: ", lengthOfLongestSubstring("dvdf"));
