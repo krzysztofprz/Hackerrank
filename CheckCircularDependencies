@@ -1,0 +1,106 @@
+// 0 -> [2]
+// 1 -> [0]
+// 2 -> [1]
+const input = [
+  [false, false, true],
+  [true, false, false],
+  [false, true, false],
+];
+
+// 0
+// 1
+// 2 -> [1, 2]
+const input2 = [
+  [false, false, false],
+  [false, false, false],
+  [false, true, true],
+];
+
+// 0 -> [2]
+// 1 -> [0]
+// 2 -> [1, 3]
+// 3 -> [1]
+const input3 = [
+  [false, false, true, false],
+  [true, false, false, false],
+  [false, true, false, true],
+  [false, true, false, false],
+];
+
+// 0 -> [1, 2, 3, 4]
+// 1 -> [0, 2, 3, 4]
+// 2 -> [0, 1, 3, 4]
+// 3 -> [0, 1, 2, 4]
+// 4 -> [0, 1, 2, 3]
+const input4 = [
+  [false, true, true, true, true],
+  [true, false, true, true, true],
+  [true, true, false, true, true],
+  [true, true, true, false, true],
+  [true, true, true, true, false],
+];
+
+function CheckCircularDependency(input: boolean[][]): number[][] {
+  let adj = new Map<number, number[]>();
+
+  for (let i = 0; i < input.length; i++) {
+    for (let j = 0; j < input[i].length; j++) {
+      if (input[i][j]) {
+        if (adj.has(i)) {
+          adj.get(i)?.push(j);
+          continue;
+        }
+
+        adj.set(i, [j]);
+      }
+    }
+  }
+
+  // 0 -> 2 -> 1 -> 0
+  function Find(issue: number, path: number[]): void {
+    console.log(`Find: ${issue} path: ${path.join(" -> ")}`);
+
+    if (stack.has(issue)) {
+      console.log(`Stack has issue. Add cycles: ${[...path]}`);
+      cycles.push([...path]);
+      return;
+    }
+
+    if (visited.has(issue)) {
+      console.log(`Visited has ${issue}`);
+      return;
+    }
+
+    console.log(`Stack: [${[...stack]}]. Add ${issue}`);
+    stack.add(issue);
+
+    let subissues = adj.get(issue) ?? [];
+    console.log(`Issue: ${issue} subissues: [${[...subissues]}]`);
+
+    for (let i = 0; i < subissues.length; i++) {
+      console.log(`Call Find(${subissues[i]}, [${[...path, subissues[i]]}])`);
+      Find(subissues[i], [...path, subissues[i]]);
+    }
+
+    console.log(`Delete ${issue} from [${[...stack]}]`);
+    stack.delete(issue);
+    console.log(`Visited: [${[...visited]}]. Add ${issue}`);
+    visited.add(issue);
+  }
+
+  let cycles: number[][] = [];
+  let visited = new Set<number>();
+  let stack = new Set<number>();
+
+  for (let i = 0; i < input.length; i++) {
+    Find(i, [i]);
+  }
+
+  return cycles;
+}
+
+let circularDependencies = CheckCircularDependency(input4);
+
+console.log(
+  circularDependencies.map(el => `[${[...el]}]`).join('\n')
+);
